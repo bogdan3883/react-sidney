@@ -2,12 +2,30 @@ class NewsletterForm extends React.Component {
   state = {
     email: '',
     formMessage: '',
+    busy: false,
   };
 
+  validateEmail(email) {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    return re.test(email);
+  }
+
+  // event handlers need "this"
   onSubmit = (event) => {
     event.preventDefault();
+    const email = this.state.email;
 
-    const message = `Emailul ${this.state.email} a fost inscris!`;
+    if (!this.validateEmail(email)) {
+      this.setState({
+        formMessage: 'Please use a valid email',
+      });
+
+      return;
+    }
+
+    const message = `Emailul ${email} a fost inscris!`;
     this.setState({
       email: '',
       formMessage: message,
@@ -38,8 +56,8 @@ class NewsletterForm extends React.Component {
           value={this.state.email}
         ></input>
 
-        <button title="Subcribe" type="submit">
-          Subscribe
+        <button title="Subcribe" type="submit" disabled={this.state.busy}>
+          {this.state.busy ? '...loading' : 'Submit'}
         </button>
 
         <div className="form-message">{this.state.formMessage}</div>
