@@ -3,6 +3,7 @@ class NewsletterForm extends React.Component {
     email: '',
     formMessage: '',
     busy: false,
+    successMessage: '',
   };
 
   validateEmail(email) {
@@ -25,11 +26,18 @@ class NewsletterForm extends React.Component {
       return;
     }
 
-    const message = `Emailul ${email} a fost inscris!`;
     this.setState({
-      email: '',
-      formMessage: message,
+      busy: true,
+      formMessage: '',
     });
+
+    setTimeout(() => {
+      this.setState({
+        busy: false,
+        email: '',
+        successMessage: `Emailul ${this.state.email} a fost inscris.`,
+      });
+    }, 3000);
   };
 
   // controlled component/input
@@ -39,7 +47,14 @@ class NewsletterForm extends React.Component {
     });
   };
 
+  // render runs everytime state changes
   render() {
+    const isSubmitted = this.state.successMessage.trim().length > 0;
+
+    if (isSubmitted) {
+      return <div className="container">{this.state.successMessage}</div>;
+    }
+
     // render must -RETURN- JSX
     return (
       <form className="form-newsletter container" onSubmit={this.onSubmit}>
