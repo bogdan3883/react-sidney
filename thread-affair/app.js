@@ -88,22 +88,38 @@ ReactDOM.render(<NewsletterForm></NewsletterForm>, newsletterContainer);
 class AddToCartButton extends React.Component {
   state = {
     added: false,
+    busy: false,
   };
 
   onClick = () => {
     // NO
     // this.state.added = !this.state.added
+
     this.setState({
-      added: !this.state.added,
+      busy: true,
     });
+
+    setTimeout(() => {
+      this.setState({
+        added: !this.state.added,
+        busy: false,
+      });
+    }, 2000);
   };
 
   // all components require a render
   render() {
     // render must return jsx
     return (
-      <button className="product-a2c" onClick={this.onClick}>
+      <button
+        className={`product-control ${this.state.added ? 'active' : ''}`}
+        onClick={this.onClick}
+        type="button"
+        title={this.state.added === true ? 'Remove from Cart' : 'Add to Cart'}
+        disabled={this.state.busy}
+      >
         {this.state.added === true ? 'Remove from Cart' : 'Add to Cart'}
+        {this.state.busy ? <i className="fas fa-spinner"></i> : ''}
       </button>
     );
   }
