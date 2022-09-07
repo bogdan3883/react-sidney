@@ -142,10 +142,26 @@ class AddToCartButton extends React.Component {
   }
 }
 
+// function react component
+const AddToWishlistButton = () => {
+  const state = React.useState({
+    added: false,
+    busy: false,
+  });
+
+  return 'AddToWishlistButton';
+};
+
+class ProductControls extends React.Component {
+  render() {
+    return <AddToCartButton productId={this.props.productId}></AddToCartButton>;
+  }
+}
+
 const productTileControls = document.querySelectorAll('.product-tile-controls');
 productTileControls.forEach((productTileControl, index) => {
   ReactDOM.render(
-    <AddToCartButton productId={index}></AddToCartButton>,
+    <ProductControls productId={index}></ProductControls>,
     productTileControl,
   );
 });
