@@ -100,6 +100,14 @@ class AddToCartButton extends React.Component {
     });
 
     setTimeout(() => {
+      dispatchEvent(
+        new CustomEvent('cart/productAdded', {
+          detail: {
+            productId: this.props.productId,
+          },
+        }),
+      );
+
       this.setState({
         added: !this.state.added,
         busy: false,
@@ -118,7 +126,9 @@ class AddToCartButton extends React.Component {
         title={this.state.added === true ? 'Remove from Cart' : 'Add to Cart'}
         disabled={this.state.busy}
       >
-        {this.state.added === true ? 'Remove from Cart' : 'Add to Cart'}
+        {this.state.added === true
+          ? `PID: ${this.props.productId} in cart`
+          : 'Add to Cart'}
         {this.state.busy ? <i className="fas fa-spinner"></i> : ''}
       </button>
     );
@@ -126,6 +136,31 @@ class AddToCartButton extends React.Component {
 }
 
 const productTileControls = document.querySelectorAll('.product-tile-controls');
-productTileControls.forEach((productTileControl) => {
-  ReactDOM.render(<AddToCartButton></AddToCartButton>, productTileControl);
+productTileControls.forEach((productTileControl, index) => {
+  ReactDOM.render(
+    <AddToCartButton productId={index}></AddToCartButton>,
+    productTileControl,
+  );
 });
+
+class HeaderCounters extends React.Component {
+  state = {
+    cartItemsCount: 0,
+  };
+
+  componentDidMount() {
+    addEventListener('cart/productAdded', () => {
+      this.setState({
+        cartItemsCount: this.state.cartItemsCount + 1,
+      });
+    });
+  }
+
+  render() {
+    return `Avem ${this.state.cartItemsCount} produse`;
+  }
+}
+
+const headerCounters = document.querySelector('.header-counters');
+// mount react the good way
+ReactDOM.createRoot(headerCounters).render(<HeaderCounters></HeaderCounters>);
