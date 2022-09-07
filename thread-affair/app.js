@@ -1,3 +1,6 @@
+const ADD_TO_CART_EVENT = 'cart/productAdded';
+const REMOVE_FROM_CART_EVENT = 'cart/productRemoved';
+
 class NewsletterForm extends React.Component {
   state = {
     email: '',
@@ -100,8 +103,12 @@ class AddToCartButton extends React.Component {
     });
 
     setTimeout(() => {
+      const eventName = this.state.added
+        ? REMOVE_FROM_CART_EVENT
+        : ADD_TO_CART_EVENT;
+
       dispatchEvent(
-        new CustomEvent('cart/productAdded', {
+        new CustomEvent(eventName, {
           detail: {
             productId: this.props.productId,
           },
@@ -146,18 +153,61 @@ productTileControls.forEach((productTileControl, index) => {
 class HeaderCounters extends React.Component {
   state = {
     cartItemsCount: 0,
+    cartItems: [],
   };
 
   componentDidMount() {
-    addEventListener('cart/productAdded', () => {
+    addEventListener(ADD_TO_CART_EVENT, (event) => {
+      const productId = event.detail.productId;
+      // slice will clone the array
+      const cartItems = this.state.cartItems.slice();
+      cartItems.push(productId);
+
       this.setState({
-        cartItemsCount: this.state.cartItemsCount + 1,
+        cartItemsCount: cartItems.length,
+        cartItems,
+      });
+    });
+
+    addEventListener(REMOVE_FROM_CART_EVENT, (event) => {
+      const productId = event.detail.productId;
+      const cartItems = this.state.cartItems.filter((cartItem) => {
+        return productId !== cartItem;
+      });
+
+      this.setState({
+        cartItemsCount: cartItems.length,
+        cartItems,
       });
     });
   }
 
+  showProducts = () => {
+    let message = '';
+
+    if (this.state.cartItems.length <= 0) {
+      message = 'There are no products in your cart';
+    } else {
+      message = `These are the pids in your cart: ${this.state.cartItems}.`;
+    }
+
+    alert(message);
+  };
+
   render() {
-    return `Avem ${this.state.cartItemsCount} produse`;
+    return (
+      <>
+        <div className="header-counter" onClick={this.showProducts}>
+          <span className="qty">{this.state.cartItemsCount}</span>
+          <i className="fas fa-heart icon"></i>
+        </div>
+
+        <div className="header-counter" onClick={this.showProducts}>
+          <span className="qty">{this.state.cartItemsCount}</span>
+          <i className="fas fa-shopping-cart icon"></i>
+        </div>
+      </>
+    );
   }
 }
 
