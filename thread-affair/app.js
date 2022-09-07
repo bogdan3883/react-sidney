@@ -84,3 +84,32 @@ class NewsletterForm extends React.Component {
 const newsletterContainer = document.querySelector('.home-newsletter');
 // React recipe?
 ReactDOM.render(<NewsletterForm></NewsletterForm>, newsletterContainer);
+
+class AddToCartButton extends React.Component {
+  state = {
+    added: false,
+  };
+
+  onClick = () => {
+    // NO
+    // this.state.added = !this.state.added
+    this.setState({
+      added: !this.state.added,
+    });
+  };
+
+  // all components require a render
+  render() {
+    // render must return jsx
+    return (
+      <button className="product-a2c" onClick={this.onClick}>
+        {this.state.added === true ? 'Remove from Cart' : 'Add to Cart'}
+      </button>
+    );
+  }
+}
+
+const productTileControls = document.querySelectorAll('.product-tile-controls');
+productTileControls.forEach((productTileControl) => {
+  ReactDOM.render(<AddToCartButton></AddToCartButton>, productTileControl);
+});
